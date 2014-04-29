@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -40,8 +42,8 @@ public class MapActivity extends FragmentActivity {
 			}
 		}
 		try {
-			addMarker(latlng.get(0));
-			addMarker(latlng.get(latlng.size() - 1));
+			addMarker(latlng.get(0), 0);
+			addMarker(latlng.get(latlng.size() - 1), 1);
 			moveCamera(latlng.get(latlng.size() - 1), 15);
 		} catch (IndexOutOfBoundsException e) {
 			Toast.makeText(this, "NoData", Toast.LENGTH_SHORT).show();
@@ -56,11 +58,29 @@ public class MapActivity extends FragmentActivity {
 		mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
 	}
 
-	private void addMarker(LatLng latlng) {
+
+private void addMarker(LatLng latlng, int i) {
 		MarkerOptions options = new MarkerOptions();
 		LatLng location = new LatLng(latlng.latitude, latlng.longitude);
 		options.position(location);
 		options.draggable(false);
+
+		switch (i) {
+		case 0:
+			BitmapDescriptor icon0 = BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+			options.icon(icon0);
+			options.title("Start");
+
+			break;
+		case 1:
+			BitmapDescriptor icon1 = BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+			options.icon(icon1);
+			options.title("Goal");
+			break;
+		}
+
 		mMap.addMarker(options);
 	}
 
