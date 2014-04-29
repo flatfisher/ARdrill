@@ -128,6 +128,22 @@ public class MySQLite {
 		return latlng;
 	}
 	
-	
+	public void Delete(Context context) {
+		long ret = 0;
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		String selection = "Secret = ?";
+		try {
+			ret = db.delete("MyTable", selection, null);
+		} finally {
+			db.close();
+			if (ret == -1) {
+				Log.v("デリート失敗", "デリートに失敗しました。");
+			} else {
+				Log.v("デリート成功", "デリートに成功しました。");
+			}
+		}
+
+	}
 	
 }

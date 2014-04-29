@@ -17,7 +17,7 @@ public class MyLocation {
 	private LocationClient mLocationClient;
 	private GetResult mGetResult;
 	private Context mContext;
-
+	
 	// private TextView _textResult;
 	public MyLocation(Context context) {
 		mContext = context;

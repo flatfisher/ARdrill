@@ -74,31 +74,34 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 		startButton.setOnClickListener(this);
 
 	}
-	
+
 	@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Intent intent = new Intent(this, ResultActivity.class);
 		startActivity(intent);
-		
-	}
 
+	}
 
 	@Override
 	public void onClick(View v) {
 
 		switch (v.getId()) {
 		case R.id.startButton:
-			editAge.selectAll();
-			mInputAge = editAge.getText().toString();
+			Intent intent = new Intent(this, ARdrillActivity.class);
+			// intent.putExtra("Gender", mInputGender);
+			// intent.putExtra("Age", mInputAge);
 			editHeight.selectAll();
 			mInputHeight = editHeight.getText().toString();
-			Intent intent = new Intent(this, ARdrillActivity.class);
-			intent.putExtra("Gender", mInputGender);
-			intent.putExtra("Age", mInputAge);
 			intent.putExtra("Height", mInputHeight);
+			Log.v("mInputHeight",mInputHeight);
+			try {
+				MySQLite sql = new MySQLite(this);
+				sql.Delete(this);
+			} finally {
+
+			}
 			startActivityForResult(intent, 0);
 			break;
 		}
 	}
-
 }
