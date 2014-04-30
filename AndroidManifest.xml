@@ -4,7 +4,7 @@
     package="jp.itnav.r4r.ardrill"
     android:versionCode="1"
     android:versionName="1.0" >
-<!-- test -->
+
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />

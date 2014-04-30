@@ -58,7 +58,7 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 						return false;
 					}
 				});
-
+		
 		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
 		radioButton = (RadioButton) findViewById(radioGroup
 				.getCheckedRadioButtonId());
@@ -67,6 +67,7 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
 						RadioButton radioButton = (RadioButton) findViewById(checkedId);
 						mInputGender = radioButton.getText().toString();
+						
 					}
 				});
 
@@ -88,19 +89,29 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.startButton:
 			Intent intent = new Intent(this, ARdrillActivity.class);
-			// intent.putExtra("Gender", mInputGender);
-			// intent.putExtra("Age", mInputAge);
+			
+			intent.putExtra("Gender", mInputGender);
+			
+			
+			editAge.selectAll();
+			mInputAge = editAge.getText().toString();
+			intent.putExtra("Age", mInputAge);
+			
 			editHeight.selectAll();
 			mInputHeight = editHeight.getText().toString();
 			intent.putExtra("Height", mInputHeight);
-			Log.v("mInputHeight",mInputHeight);
+			
 			try {
 				MySQLite sql = new MySQLite(this);
 				sql.Delete(this);
-			} finally {
-
+				Log.v("Gender",mInputGender);
+				Log.v("Age",mInputAge);
+				Log.v("mInputHeight",mInputHeight);
+				startActivityForResult(intent, 0);
+			}catch(NullPointerException e) {
+			     Toast.makeText(this, "", Toast.LENGTH_LONG).show();
 			}
-			startActivityForResult(intent, 0);
+			
 			break;
 		}
 	}

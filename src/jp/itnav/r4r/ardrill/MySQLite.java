@@ -83,6 +83,49 @@ public class MySQLite {
 	
 	}
 	
+	public double DistanceSerch() {
+		int ret = 0;
+		Cursor cursor;
+		double distance = 0.0;
+		String[] cols = { "Latitude", "Longitude", "Distance"};
+		String selection = null;
+		String[] selectionArgs = null;
+		String groupBy = null;
+		String having = null;
+		String orderBy = null;
+		DatabaseHelper dbHelper = new DatabaseHelper(mContext);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		try {
+			cursor = db.query("MyTable", cols, selection, selectionArgs,
+					groupBy, having, orderBy);
+			try {
+				cursor.moveToFirst();
+				int count = cursor.getCount();
+				Log.v("cursor", String.valueOf(count));
+				for (int i = 0; i < count; i++) {
+					Log.v("cursor1",String.valueOf(cursor.getDouble(0)));
+					Log.v("cursor2",String.valueOf(cursor.getDouble(1)));
+					Log.v("cursor3",String.valueOf(cursor.getDouble(2)));
+					distance += cursor.getDouble(2);
+					cursor.moveToNext();
+				}
+
+			} catch (Exception e) {
+				Log.v("Exception", String.valueOf(e));
+			}
+
+		} finally {
+			db.close();
+			if (ret == -1) {
+				Log.v("サーチ失敗", "サーチに失敗しました。");
+			} else {
+				Log.v("サーチ成功", "サーチに成功しました。");
+			}
+		}
+		return distance;
+	
+	}
+	
 	public ArrayList<LatLng> getLatLng(){
 		int ret = 0;
 		Cursor cursor;
@@ -132,9 +175,10 @@ public class MySQLite {
 		long ret = 0;
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		String selection = "Secret = ?";
+		String[] whereArgs = null;
+		String selection = null;
 		try {
-			ret = db.delete("MyTable", selection, null);
+			ret = db.delete("MyTable", selection, whereArgs);
 		} finally {
 			db.close();
 			if (ret == -1) {
