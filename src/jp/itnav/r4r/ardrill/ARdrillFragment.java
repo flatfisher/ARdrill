@@ -10,9 +10,13 @@ import java.util.TimerTask;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.EGLConfig;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import jp.itnav.r4r.ardrill.MyLocation.GetResult;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.hardware.Camera;
@@ -23,6 +27,7 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -44,9 +49,11 @@ import rajawali.renderer.RajawaliRenderer;
 
 /**
  * @author ktaka
- *
+ * 
  */
-public class ARdrillFragment extends RajawaliFragment implements SensorEventListener {
+public class ARdrillFragment extends RajawaliFragment implements
+		SensorEventListener {
+
 	private final float ALPHA = 0.8f;
 	private final int SENSITIVITY = 5;
 	public static final String BUNDLE_EXAMPLE_URL = "BUNDLE_EXAMPLE_URL";
@@ -71,7 +78,7 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 	private Timer mTimer;
 	Handler mHandler;
 	MySQLite mSql;
-	
+
 	private SurfaceHolder.Callback mSurfaceListener = new SurfaceHolder.Callback() {
 		public void surfaceCreated(SurfaceHolder holder) {
 			// TODO Auto-generated method stub
@@ -98,10 +105,7 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 			myCamera.startPreview();
 		}
 	};
-	
-	/**
-	 * 
-	 */
+
 	public ARdrillFragment() {
 		// TODO Auto-generated constructor stub
 	}
@@ -122,26 +126,28 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		mLayout = (FrameLayout) inflater.inflate(R.layout.fragment_ardrill, container, false);
+		mLayout = (FrameLayout) inflater.inflate(R.layout.fragment_ardrill,
+				container, false);
 
 		mLayout.addView(mSurfaceView);
 
-		SurfaceView mySurfaceView = (SurfaceView) mLayout.findViewById(R.id.surface_view);
+		SurfaceView mySurfaceView = (SurfaceView) mLayout
+				.findViewById(R.id.surface_view);
 		SurfaceHolder holder = mySurfaceView.getHolder();
 		holder.addCallback(mSurfaceListener);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		
-		setLayout();
-		View topPanelLayout = mLayout.findViewById(R.id.top_panel_layout);
-		topPanelLayout.bringToFront();
-		
+
+		// setLayout();
+		// View topPanelLayout = mLayout.findViewById(R.id.top_panel_layout);
+		// topPanelLayout.bringToFront();
+
 		mGravity = new float[3];
 		mSensorManager = (SensorManager) getActivity().getSystemService(
 				Context.SENSOR_SERVICE);
 		mSensorManager.registerListener(this,
 				mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_FASTEST);
-//
+		//
 		mLayout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -158,82 +164,147 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 		mGetLocation = new MyLocation(getActivity());
 		mSql = new MySQLite(getActivity());
 		mSql.Serch();
-		
+
 		return mLayout;
 	}
-	
+
 	@Override
 	public void onResume() {
-    	super.onResume();
-    	startGetLocation(5);
+		super.onResume();
+		startGetLocation(1);
 	}
-	
-	@Override 
+
+	@Override
 	public void onPause() {
+		stop();
 		super.onPause();
 	}
 	
+	@Override
+	public void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+	}
+
 	private void stop() {
 		mTimer.cancel();
 		mGetLocation.stop();
-//		mGetActivityRecognition.stop();
+		SharedPeferebces();
+		// mGetActivityRecognition.stop();
 	}
-	
+
+	@Override
+	public void onDestroyView() {
+//		stop();
+		super.onDestroyView();
+	}
+
+	private void SharedPeferebces() {
+		SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		sp.edit().putString("playtime", setPlayTime()).commit();
+		sp.edit().putString("laptime", String.valueOf(lapTime)).commit();
+	}
+
+	private String setPlayTime() {
+		String hour;
+		String minute;
+
+		if (hourTime < 10) {
+			hour = "0" + String.valueOf(hourTime);
+		} else {
+			hour = String.valueOf(hourTime);
+		}
+
+		if (minuteTime < 10) {
+			minute = "0" + String.valueOf(minuteTime);
+		} else {
+			minute = String.valueOf(minuteTime);
+		}
+		return hour + ":" + minute;
+	}
+
 	private void startGetLocation(int interval) {
 		mGetLocation.start(interval);
-//		mGetActivityRecognition.start();
+		// mGetActivityRecognition.start();
+		lapTime = 0;
+		minuteTime = 0;
+		hourTime = 0;
 		Get(interval);
 	}
-	
+
+	int lapTime = 0;
+	int minuteTime = 0;
+	int hourTime = 0;
+	double distance = 0.0;
 	double onceLatitude = 999;
 	double onceLongitude = 999;
-	private void Get(int interval) {
+
+	private void Get(final int interval) {
 		mTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
+				lapTime += 1 * interval;
+				if (minuteTime > 59) {
+					minuteTime = 0;
+					hourTime += 1 * interval;
+				} else {
+					minuteTime += 1 * interval;
+				}
 				mHandler.post(new Runnable() {
 					public void run() {
-						
+
 						mGetResult = mGetLocation.getResult();
 						SimpleDateFormat sdf = new SimpleDateFormat("kk:mm");
-						//mTimeText.setText(sdf.format(mGetResult.time));
-						//mLatitudeText.setText(String.valueOf(mGetResult.latitude));
-						//mLongitudeText.setText(String
-								//.valueOf(mGetResult.longitude));
-						//mSpeedText.setText(String.valueOf(mGetResult.speed));
-						//mAccuracyText.setText(String
-						//		.valueOf(mGetResult.accuracy));
-						//mAltitudeText.setText(String
-						//		.valueOf(mGetResult.altitude));
+
+						// mTimeText.setText(sdf.format(mGetResult.time));
+						// mLatitudeText.setText(String.valueOf(mGetResult.latitude));
+						// mLongitudeText.setText(String
+						// .valueOf(mGetResult.longitude));
+						// mSpeedText.setText(String.valueOf(mGetResult.speed));
+						// mAccuracyText.setText(String
+						// .valueOf(mGetResult.accuracy));
+						// mAltitudeText.setText(String
+						// .valueOf(mGetResult.altitude));
 
 						if (mGetResult.latitude != 0
 								&& mGetResult.longitude != 0) {
-							if (onceLatitude != 999 && onceLongitude != 999) {
+							if (onceLatitude == 999 && onceLongitude == 999) {
 								mSql.Insert(mGetResult.latitude,
 										mGetResult.longitude, 0);
+								onceLatitude = mGetResult.latitude;
+								onceLongitude = mGetResult.longitude;
 							} else {
+								
+								distance += setDistance();
+								
 								mSql.Insert(mGetResult.latitude,
 										mGetResult.longitude, setDistance());
+								onceLatitude = mGetResult.latitude;
+								onceLongitude = mGetResult.longitude;
 							}
 						}
-						onceLatitude = mGetResult.latitude;
-						onceLongitude = mGetResult.longitude;
+
 					}
 				});
 			}
 		}, 0, interval * 1000);
 
 	}
-	
+
 	private double setDistance() {
 		return getDistance(onceLatitude, onceLongitude, mGetResult.latitude,
-				mGetResult.longitude, 7);
+				mGetResult.longitude, 7) * 1000;
 	}
 	
+	private double getSpeed(double distance, int interval){
+		return distance / interval;
+	}
+
 	private double getDistance(double lat1, double lng1, double lat2,
 			double lng2, int precision) {
-		//kmで返す
-		int R = 6378; 
+		// kmで返す
+		int R = 6378;
 		double lat = Math.toRadians(lat2 - lat1);
 		double lng = Math.toRadians(lng2 - lng1);
 		double A = Math.sin(lat / 2) * Math.sin(lat / 2)
@@ -264,11 +335,11 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 		}
 
 		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-			//showLoader();
+			// showLoader();
 			super.onSurfaceCreated(gl, config);
-			//hideLoader();
+			// hideLoader();
 		}
-		
+
 		public void playAnimation(String name) {
 			if (name.equals("loop all")) {
 				mOgre.play();
@@ -276,7 +347,7 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 				mOgre.play(name, true);
 			}
 		}
-		
+
 		protected void initScene() {
 			mLight = new DirectionalLight(0, 0, 1);
 			mLight.setPower(1);
@@ -285,11 +356,11 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 			getCurrentCamera().setLookAt(0, 0, 0);
 
 			Material material = new Material();
-	        material.setColor(0x880000ff);
-	        mPlane = new Plane(30.0f, 13.0f, 1, 1);
-	        mPlane.setMaterial(material);
-	        mPlane.setY(-1.5);
-			
+			material.setColor(0x880000ff);
+			mPlane = new Plane(30.0f, 13.0f, 1, 1);
+			mPlane.setMaterial(material);
+			mPlane.setY(-1.5);
+
 			LoaderMD2 parser = new LoaderMD2(mContext.getResources(),
 					mTextureManager, R.raw.ogro);
 			try {
@@ -298,30 +369,31 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 				mOgre = (VertexAnimationObject3D) parser
 						.getParsedAnimationObject();
 				mOgre.setScale(.07f);
-				//mOgre.setRotY(90);
+				// mOgre.setRotY(90);
 				mOgre.setY(-1);
-
-				addChild(mOgre);
-				
-				addChild(mPlane);
+				mOgre.setFps(4);
+				// addChild(mOgre);
+				getCurrentScene().addChild(mOgre);
+				getCurrentScene().addChild(mPlane);
+				// addChild(mPlane);
 
 				mOgre.play();
-//				mOgre.play("loop all", true);
+				// mOgre.play("loop all", true);
 				mOgre.play("run", true);
-//				mOgre.play("crwalk", true);
-//				mRenderer.playAnimation("loop all");
+				// mOgre.play("crwalk", true);
+				// mRenderer.playAnimation("loop all");
 			} catch (ParsingException e) {
 				e.printStackTrace();
 			}
 			getCurrentScene().setBackgroundColor(0);
 		}
-		
+
 		public void onDrawFrame(GL10 glUnused) {
 			mOgre.setRotation(mAccValues.x, mAccValues.y + 90.0, mAccValues.z);
 			mPlane.setRotation(mAccValues.x - 90, mAccValues.y, mAccValues.z);
 			super.onDrawFrame(glUnused);
 		}
-		
+
 		public void setAccelerometerValues(float x, float y, float z) {
 			mAccValues.setAll(-y, -x, -z);
 		}
@@ -339,54 +411,11 @@ public class ARdrillFragment extends RajawaliFragment implements SensorEventList
 			mGravity[1] = ALPHA * mGravity[1] + (1 - ALPHA) * event.values[1];
 			mGravity[2] = ALPHA * mGravity[2] + (1 - ALPHA) * event.values[2];
 
-			mRenderer.setAccelerometerValues(
-					event.values[1] - mGravity[1] * SENSITIVITY,
-					event.values[0] - mGravity[0] * SENSITIVITY, 0);
+			mRenderer.setAccelerometerValues(event.values[1] - mGravity[1]
+					* SENSITIVITY, event.values[0] - mGravity[0] * SENSITIVITY,
+					0);
 		}
-		
-	}
-	private void setLayout() {
-		msgText1 = (TextView) mLayout.findViewById(R.id.msg_text1);
-		msgText1.setTextColor(Color.BLACK);
-		msgText1.setText(R.string.msg_text1);
-		msgText2 = (TextView) mLayout.findViewById(R.id.msg_text2);
-		msgText2.setTextColor(Color.BLACK);
-		msgText2.setText(R.string.msg_text2);
-		msgText3 = (TextView) mLayout.findViewById(R.id.msg_text3);
-		msgText3.setTextColor(Color.RED);
-		msgText3.setTextSize(30);
-		msgText3.setTypeface(Typeface.DEFAULT_BOLD);
-		msgText4 = (TextView) mLayout.findViewById(R.id.msg_text4);
-		msgText4.setTextColor(Color.RED);
-		msgText4.setTextSize(30);
-		msgText4.setTypeface(Typeface.DEFAULT_BOLD);
-		msgText5 = (TextView) mLayout.findViewById(R.id.msg_text5);
-		msgText5.setTextColor(Color.BLACK);
-		msgText5.setText(R.string.msg_text5);
-		msgText6 = (TextView) mLayout.findViewById(R.id.msg_text6);
-		msgText6.setTextColor(Color.BLACK);
-		msgText6.setText(R.string.msg_text6);
-
-
-//		artText = (TextView) mView.findViewById(R.id.art_text);
-//		artText.setTextColor(Color.BLACK);
-//		artText.setText("前方に倒れた電柱あり!");
-//		artText.setTypeface(Typeface.DEFAULT_BOLD);
-//		artText.setTextSize(25);
-//		
-//		artText2 = (TextView) mView.findViewById(R.id.art_text2);
-//		artText2.setTextColor(Color.BLACK);
-//		artText2.setText("元来た道を戻ってください!");
-//		artText2.setTypeface(Typeface.DEFAULT_BOLD);
-//		artText2.setTextSize(20);
-//		
-//		artImage = (ImageView)mView.findViewById(R.id.art_img);
-//		artImage.setImageResource(R.drawable.sign_turn);
-//		
-//		stpImage = (ImageView) mView.findViewById(R.id.stop_img);
-		
-		msgText3.setText("540");
-		msgText4.setText("4");
 
 	}
+
 }
