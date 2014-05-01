@@ -1,11 +1,13 @@
 package jp.itnav.r4r.ardrill;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -107,11 +109,12 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 				Log.v("Gender",mInputGender);
 				Log.v("Age",mInputAge);
 				Log.v("mInputHeight",mInputHeight);
+				SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		        sp.edit().remove("playtime").commit();
 				startActivityForResult(intent, 0);
 			}catch(NullPointerException e) {
 			     Toast.makeText(this, "", Toast.LENGTH_LONG).show();
 			}
-			
 			break;
 		}
 	}
