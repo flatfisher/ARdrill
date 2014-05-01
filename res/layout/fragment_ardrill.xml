@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     
-    <RelativeLayout
+    <!-- <RelativeLayout
         android:id="@+id/top_panel_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
@@ -74,7 +74,7 @@
             android:layout_marginLeft="14dp"
             android:layout_toRightOf="@+id/msg_text4"
             android:text="TextView" />
-    </RelativeLayout>
+    </RelativeLayout> -->
 <!--     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
