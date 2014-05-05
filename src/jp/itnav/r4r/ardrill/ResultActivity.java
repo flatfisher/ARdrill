@@ -73,6 +73,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.ShowMapButton:
 			Intent intent = new Intent(this, MapActivity.class);
+			intent.putExtra("type", "result");
 			startActivity(intent);
 		}
 

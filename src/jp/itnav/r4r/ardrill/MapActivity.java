@@ -1,11 +1,16 @@
 package jp.itnav.r4r.ardrill;
 
 import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
-
+import android.os.Handler;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import java.util.ArrayList;
-
+import java.util.Timer;
+import java.util.TimerTask;
+import jp.itnav.r4r.ardrill.MyLocation.GetResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -15,25 +20,52 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-
-import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
-public class MapActivity extends FragmentActivity {
+public class MapActivity extends FragmentActivity implements OnClickListener {
 	private GoogleMap mMap = null;
 	private MySQLite mSql;
+	private Button registerBtn;
+	private MarkerOptions mDestination;
+	private MyLocation mGetLocation;
+	private GetResult mGetResult;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
+		registerBtn = (Button) findViewById(R.id.registerBtn);
+		registerBtn.setOnClickListener(this);
+		mGetLocation = new MyLocation(this);
 		mMap = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
 		mSql = new MySQLite(this);
 		mMap.setMyLocationEnabled(true);
 
+		try {
+			Intent get = getIntent();
+			String type = get.getStringExtra("type");
+			if (type.equals("destination")) {
+				setDestination();
+			} else if (type.equals("result")) {
+				setResultMap();
+			}
+
+		} catch (NullPointerException e) {
+
+		}
+
+	}
+
+	private void setDestination() {
+		Get(1);
+	}
+
+	private void setResultMap() {
+		registerBtn.setVisibility(View.GONE);
 		ArrayList<LatLng> latlng = new ArrayList<LatLng>();
 		latlng.addAll(mSql.getLatLng());
 		for (int i = 0; i < latlng.size(); i++) {
@@ -48,7 +80,6 @@ public class MapActivity extends FragmentActivity {
 		} catch (IndexOutOfBoundsException e) {
 			Toast.makeText(this, "NoData", Toast.LENGTH_SHORT).show();
 		}
-
 	}
 
 	private void moveCamera(LatLng latlng, float zoom) {
@@ -58,8 +89,15 @@ public class MapActivity extends FragmentActivity {
 		mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPos));
 	}
 
+	private void addMarker(LatLng latlng) {
+		mDestination = new MarkerOptions();
+		LatLng location = new LatLng(latlng.latitude, latlng.longitude);
+		mDestination.position(location);
+		mDestination.draggable(true);
+		mMap.addMarker(mDestination);
+	}
 
-private void addMarker(LatLng latlng, int i) {
+	private void addMarker(LatLng latlng, int i) {
 		MarkerOptions options = new MarkerOptions();
 		LatLng location = new LatLng(latlng.latitude, latlng.longitude);
 		options.position(location);
@@ -94,4 +132,40 @@ private void addMarker(LatLng latlng, int i) {
 		mMap.addPolyline(options);
 	}
 
+	@Override
+	public void onClick(View v) {
+		SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		sp.edit()
+				.putString("goalposition",
+						String.valueOf(mDestination.getPosition())).commit();
+		finish();
+	}
+
+	private Handler mHandler = new Handler();
+	private Timer mTimer = new Timer();
+
+	private void Get(final int interval) {
+		
+		mGetLocation.start(interval);
+		mTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				mGetResult = mGetLocation.getResult();
+				mHandler.post(new Runnable() {
+					public void run() {
+						if (mGetResult.latitude != 0 && mGetResult.longitude != 0) {
+							LatLng latlng = new LatLng(mGetResult.latitude,
+									mGetResult.longitude);
+							moveCamera(latlng, 17.0f);
+							addMarker(latlng);
+							mGetLocation.stop();
+							mTimer.cancel();
+						}
+					}
+				});
+			}
+		}, 0, interval * 1000);
+
+	}
 }

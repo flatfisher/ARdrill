@@ -6,13 +6,10 @@ package jp.itnav.r4r.ardrill;
 import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.egl.EGLConfig;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import jp.itnav.r4r.ardrill.MyLocation.GetResult;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -61,18 +58,6 @@ public class ARdrillFragment extends RajawaliFragment implements
 	private SensorManager mSensorManager;
 	private Camera myCamera;
 	private float mGravity[];
-	private TextView msgText1;
-	private TextView msgText2;
-	private TextView msgText3;
-	private TextView msgText4;
-	private TextView msgText5;
-	private TextView msgText6;
-	private TextView artText;
-	private TextView artText2;
-	private ImageView stpImage;
-	private RelativeLayout artLayout;
-	private ImageView artImage;
-	private boolean actionBarShowing = true;
 	private MyLocation mGetLocation;
 	private GetResult mGetResult;
 	private Timer mTimer;

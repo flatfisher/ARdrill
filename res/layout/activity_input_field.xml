@@ -93,6 +93,24 @@
             android:id="@+id/startButton"
             android:layout_width="60dp"
             android:layout_height="45dp"
+            android:layout_alignLeft="@+id/HightTitleText"
+            android:layout_below="@+id/heightEditText"
+            android:layout_margin="10dp"
+            android:background="#00BFFF" >
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Button" />
+            
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/startButton"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
             android:layout_alignRight="@+id/HightTitleText"
             android:layout_below="@+id/heightEditText"
             android:layout_margin="10dp"

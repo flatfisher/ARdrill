@@ -31,12 +31,16 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 	private String mInputGender;
 	private String mInputAge;
 	private String mInputHeight;
+	private Button button;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_input_field);
 
+		button = (Button) findViewById(R.id.button1);
+		button.setOnClickListener(this);
+		
 		editAge = (EditText) findViewById(R.id.ageEditText);
 
 		editHeight = (EditText) findViewById(R.id.heightEditText);
@@ -60,7 +64,7 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 						return false;
 					}
 				});
-		
+
 		radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
 		radioButton = (RadioButton) findViewById(radioGroup
 				.getCheckedRadioButtonId());
@@ -69,7 +73,7 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
 						RadioButton radioButton = (RadioButton) findViewById(checkedId);
 						mInputGender = radioButton.getText().toString();
-						
+
 					}
 				});
 
@@ -78,12 +82,11 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Intent intent = new Intent(this, ResultActivity.class);
-		startActivity(intent);
-
-	}
+//	@Override
+//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		Intent intent = new Intent(this, ResultActivity.class);
+//		startActivity(intent);
+//	}
 
 	@Override
 	public void onClick(View v) {
@@ -116,6 +119,11 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 			     Toast.makeText(this, "", Toast.LENGTH_LONG).show();
 			}
 			break;
+		case R.id.button1:
+			Intent intent2 = new Intent(this, MapActivity.class);
+			intent2.putExtra("type", "destination");
+			startActivityForResult(intent2, 0);
+			break;	
 		}
 	}
 }
