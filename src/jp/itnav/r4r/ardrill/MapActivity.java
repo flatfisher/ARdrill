@@ -134,19 +134,24 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		SharedPreferences sp = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		sp.edit()
-				.putString("goalposition",
-						String.valueOf(mDestination.getPosition())).commit();
-		finish();
+		try {
+			SharedPreferences sp = PreferenceManager
+					.getDefaultSharedPreferences(this);
+			sp.edit()
+					.putString("goalposition",
+							String.valueOf(mDestination.getPosition()))
+					.commit();
+			finish();
+		} catch (NullPointerException e) {
+			  Toast.makeText(this, "", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	private Handler mHandler = new Handler();
 	private Timer mTimer = new Timer();
 
 	private void Get(final int interval) {
-		
+
 		mGetLocation.start(interval);
 		mTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -154,7 +159,8 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 				mGetResult = mGetLocation.getResult();
 				mHandler.post(new Runnable() {
 					public void run() {
-						if (mGetResult.latitude != 0 && mGetResult.longitude != 0) {
+						if (mGetResult.latitude != 0
+								&& mGetResult.longitude != 0) {
 							LatLng latlng = new LatLng(mGetResult.latitude,
 									mGetResult.longitude);
 							moveCamera(latlng, 17.0f);

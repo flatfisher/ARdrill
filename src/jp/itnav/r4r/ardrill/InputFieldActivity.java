@@ -38,6 +38,10 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_input_field);
 
+
+		RelativeLayout startButton = (RelativeLayout) findViewById(R.id.startButton);
+		startButton.setOnClickListener(this);
+		
 		button = (Button) findViewById(R.id.button1);
 		button.setOnClickListener(this);
 		
@@ -77,9 +81,6 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 					}
 				});
 
-		RelativeLayout startButton = (RelativeLayout) findViewById(R.id.startButton);
-		startButton.setOnClickListener(this);
-
 	}
 
 //	@Override
@@ -93,10 +94,9 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 		case R.id.startButton:
+			Log.v("ddd","ddd");
 			Intent intent = new Intent(this, ARdrillActivity.class);
-			
 			intent.putExtra("Gender", mInputGender);
-			
 			
 			editAge.selectAll();
 			mInputAge = editAge.getText().toString();
@@ -109,11 +109,13 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 			try {
 				MySQLite sql = new MySQLite(this);
 				sql.Delete(this);
-				Log.v("Gender",mInputGender);
-				Log.v("Age",mInputAge);
-				Log.v("mInputHeight",mInputHeight);
+				//LogがNullにならなかったらインテント
+				Log.i("Gender",mInputGender);
+				Log.i("Age",mInputAge);
+				Log.i("mInputHeight",mInputHeight);
 				SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		        sp.edit().remove("playtime").commit();
+		        Log.i("GoalPotision",sp.getString("goalposition", null));
 				startActivityForResult(intent, 0);
 			}catch(NullPointerException e) {
 			     Toast.makeText(this, "", Toast.LENGTH_LONG).show();

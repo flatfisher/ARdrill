@@ -3,5 +3,6 @@
     <color name="text_color">#6495ED</color>  
     <color name="result_bg_color">#E0FFFF</color>  
     <color name="button_bg_color">#00BFFF</color>
+    <color name="button_push_color">#0085B2</color>
     <color name="button_text_color">#FFFFFF</color>
 </resources>

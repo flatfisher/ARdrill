@@ -90,23 +90,23 @@
         </EditText>
 
         <RelativeLayout
-            android:id="@+id/startButton"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_alignLeft="@+id/HightTitleText"
             android:layout_below="@+id/heightEditText"
-            android:layout_margin="10dp"
-            android:background="#00BFFF" >
+            android:layout_margin="10dp" >
 
             <Button
                 android:id="@+id/button1"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:text="Button" />
-            
+                android:background="@drawable/button_design"
+                android:text="ゴール"
+                android:textColor="#ffffff" />
         </RelativeLayout>
+
         <RelativeLayout
             android:id="@+id/startButton"
             android:layout_width="60dp"
@@ -114,16 +114,16 @@
             android:layout_alignRight="@+id/HightTitleText"
             android:layout_below="@+id/heightEditText"
             android:layout_margin="10dp"
-            android:background="#00BFFF" >
+            android:background="@drawable/button_design" >
 
             <TextView
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#ffffff"
+                android:layout_centerInParent="true"
                 android:gravity="center"
-                android:textSize="20dp"
-                android:text="Start" />
+                android:text="Start"
+                android:textColor="#ffffff"
+                android:textSize="20dp" />
         </RelativeLayout>
     </RelativeLayout>
 
