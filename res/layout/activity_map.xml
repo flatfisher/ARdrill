@@ -23,6 +23,6 @@
         android:layout_marginBottom="34dp"
         android:background="@drawable/button_design"
         android:textColor="#ffffff"
-        android:text="Button" />
+        android:text="Set Goal Position" />
 
 </RelativeLayout>

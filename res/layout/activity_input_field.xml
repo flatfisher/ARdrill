@@ -103,7 +103,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:background="@drawable/button_design"
-                android:text="ゴール"
+                android:text="Set Goal Position"
                 android:textColor="#ffffff" />
         </RelativeLayout>
 
@@ -125,6 +125,15 @@
                 android:textColor="#ffffff"
                 android:textSize="20dp" />
         </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/heightEditText"
+            android:layout_alignBottom="@+id/heightEditText"
+            android:layout_alignRight="@+id/heightEditText"
+            android:text="cm" />
+
     </RelativeLayout>
 
 </RelativeLayout>

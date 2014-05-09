@@ -83,11 +83,13 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 
 	}
 
-//	@Override
-//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		Intent intent = new Intent(this, ResultActivity.class);
-//		startActivity(intent);
-//	}
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(resultCode != -1){
+		Intent intent = new Intent(this, ResultActivity.class);
+		startActivity(intent);
+		}
+	}
 
 	@Override
 	public void onClick(View v) {
@@ -115,10 +117,11 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 				Log.i("mInputHeight",mInputHeight);
 				SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		        sp.edit().remove("playtime").commit();
+		        sp.edit().remove("normaltime").commit();
 		        Log.i("GoalPotision",sp.getString("goalposition", null));
 				startActivityForResult(intent, 0);
 			}catch(NullPointerException e) {
-			     Toast.makeText(this, "", Toast.LENGTH_LONG).show();
+			     Toast.makeText(this, "Error There are missing fields. Back", Toast.LENGTH_LONG).show();
 			}
 			break;
 		case R.id.button1:

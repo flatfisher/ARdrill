@@ -37,6 +37,7 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
+		setToast("Retrieving Current Location");
 		registerBtn = (Button) findViewById(R.id.registerBtn);
 		registerBtn.setOnClickListener(this);
 		mGetLocation = new MyLocation(this);
@@ -141,9 +142,11 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 					.putString("goalposition",
 							String.valueOf(mDestination.getPosition()))
 					.commit();
+			setResult(RESULT_OK);
+			setToast("Goal Position Set");
 			finish();
 		} catch (NullPointerException e) {
-			  Toast.makeText(this, "", Toast.LENGTH_LONG).show();
+			setToast("Retrieving Current Location");
 		}
 	}
 
@@ -151,7 +154,6 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 	private Timer mTimer = new Timer();
 
 	private void Get(final int interval) {
-
 		mGetLocation.start(interval);
 		mTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -165,6 +167,7 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 									mGetResult.longitude);
 							moveCamera(latlng, 17.0f);
 							addMarker(latlng);
+							setToast("Drop pin on Goal Position");
 							mGetLocation.stop();
 							mTimer.cancel();
 						}
@@ -173,5 +176,8 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 			}
 		}, 0, interval * 1000);
 
+	}
+	private void setToast(String message){
+		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
 }

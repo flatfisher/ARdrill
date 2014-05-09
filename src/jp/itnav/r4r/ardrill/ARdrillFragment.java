@@ -164,7 +164,7 @@ public class ARdrillFragment extends RajawaliFragment implements
 		stop();
 		super.onPause();
 	}
-	
+
 	@Override
 	public void onStop() {
 		// TODO Auto-generated method stub
@@ -180,7 +180,7 @@ public class ARdrillFragment extends RajawaliFragment implements
 
 	@Override
 	public void onDestroyView() {
-//		stop();
+		// stop();
 		super.onDestroyView();
 	}
 
@@ -189,22 +189,46 @@ public class ARdrillFragment extends RajawaliFragment implements
 				.getDefaultSharedPreferences(getActivity());
 		sp.edit().putString("playtime", setPlayTime()).commit();
 		sp.edit().putString("laptime", String.valueOf(lapTime)).commit();
+		sp.edit().putString("normaltime", setNormalTime()).commit();
 	}
 
 	private String setPlayTime() {
 		String hour;
 		String minute;
 
-		if (hourTime < 10) {
-			hour = "0" + String.valueOf(hourTime);
+		if (minuteTime < 10) {
+			hour = "0" + String.valueOf(minuteTime);
 		} else {
-			hour = String.valueOf(hourTime);
+			hour = String.valueOf(minuteTime);
 		}
 
-		if (minuteTime < 10) {
-			minute = "0" + String.valueOf(minuteTime);
+		if (secondTime < 10) {
+			minute = "0" + String.valueOf(secondTime);
 		} else {
-			minute = String.valueOf(minuteTime);
+			minute = String.valueOf(secondTime);
+		}
+		return hour + ":" + minute;
+	}
+
+	private String setNormalTime() {
+		String hour;
+		String minute;
+		minuteTime = minuteTime / 2;
+		if (secondTime > 0) {
+			secondTime = secondTime / 2;
+			if (secondTime < 0) {
+				secondTime = secondTime / 1;
+			}
+		}
+		if (minuteTime < 10) {
+			hour = "0" + String.valueOf(minuteTime);
+		} else {
+			hour = String.valueOf(minuteTime);
+		}
+		if (secondTime < 10) {
+			minute = "0" + String.valueOf(secondTime);
+		} else {
+			minute = String.valueOf(secondTime);
 		}
 		return hour + ":" + minute;
 	}
@@ -213,14 +237,14 @@ public class ARdrillFragment extends RajawaliFragment implements
 		mGetLocation.start(interval);
 		// mGetActivityRecognition.start();
 		lapTime = 0;
+		secondTime = 0;
 		minuteTime = 0;
-		hourTime = 0;
 		Get(interval);
 	}
 
 	int lapTime = 0;
+	int secondTime = 0;
 	int minuteTime = 0;
-	int hourTime = 0;
 	double distance = 0.0;
 	double onceLatitude = 999;
 	double onceLongitude = 999;
@@ -230,11 +254,11 @@ public class ARdrillFragment extends RajawaliFragment implements
 			@Override
 			public void run() {
 				lapTime += 1 * interval;
-				if (minuteTime > 59) {
-					minuteTime = 0;
-					hourTime += 1 * interval;
-				} else {
+				if (secondTime > 59) {
+					secondTime = 0;
 					minuteTime += 1 * interval;
+				} else {
+					secondTime += 1 * interval;
 				}
 				mHandler.post(new Runnable() {
 					public void run() {
@@ -260,9 +284,9 @@ public class ARdrillFragment extends RajawaliFragment implements
 								onceLatitude = mGetResult.latitude;
 								onceLongitude = mGetResult.longitude;
 							} else {
-								
+
 								distance += setDistance();
-								
+
 								mSql.Insert(mGetResult.latitude,
 										mGetResult.longitude, setDistance());
 								onceLatitude = mGetResult.latitude;
@@ -281,8 +305,8 @@ public class ARdrillFragment extends RajawaliFragment implements
 		return getDistance(onceLatitude, onceLongitude, mGetResult.latitude,
 				mGetResult.longitude, 7) * 1000;
 	}
-	
-	private double getSpeed(double distance, int interval){
+
+	private double getSpeed(double distance, int interval) {
 		return distance / interval;
 	}
 

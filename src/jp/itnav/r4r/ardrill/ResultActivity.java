@@ -42,8 +42,9 @@ public class ResultActivity extends Activity implements OnClickListener {
 		setTime();
 //		MyCountDownTimer setTime = new MyCountDownTimer(1000, 1000, this);
 //		setTime.start();
-		
-		mNormalSpeedText.setText("01:57");
+		SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		mNormalSpeedText.setText(sp.getString("normaltime", null));
 	}
 
 	private double setDistance() {
