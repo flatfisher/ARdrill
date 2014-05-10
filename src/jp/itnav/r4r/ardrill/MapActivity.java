@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import java.util.ArrayList;
@@ -180,4 +181,15 @@ public class MapActivity extends FragmentActivity implements OnClickListener {
 	private void setToast(String message){
 		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 	}
+	
+	@Override
+	  public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if(keyCode==KeyEvent.KEYCODE_BACK){
+	    	setResult(RESULT_OK);
+			finish();
+	      return true;
+	    }
+	    return false;
+	  }
+	
 }

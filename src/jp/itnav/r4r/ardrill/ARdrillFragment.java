@@ -213,7 +213,12 @@ public class ARdrillFragment extends RajawaliFragment implements
 	private String setNormalTime() {
 		String hour;
 		String minute;
-		minuteTime = minuteTime / 2;
+		if (minuteTime != 1) {
+			minuteTime = minuteTime / 2;
+		} else {
+			minuteTime = 0;
+			secondTime += 30;
+		}
 		if (secondTime > 0) {
 			secondTime = secondTime / 2;
 			if (secondTime < 0) {
