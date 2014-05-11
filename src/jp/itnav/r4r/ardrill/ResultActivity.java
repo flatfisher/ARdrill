@@ -38,36 +38,44 @@ public class ResultActivity extends Activity implements OnClickListener {
 	}
 
 	private void setResult() {
-		mDistanceText.setText(setDistance() + "m");
+
+		BigDecimal bi = new BigDecimal(
+				String.valueOf((setDistance() * 6.4) * 5));
+		double distance = bi.setScale(2, BigDecimal.ROUND_UP).doubleValue();
+		mDistanceText.setText(distance + "ft.");
+
 		setTime();
-//		MyCountDownTimer setTime = new MyCountDownTimer(1000, 1000, this);
-//		setTime.start();
+		// MyCountDownTimer setTime = new MyCountDownTimer(1000, 1000, this);
+		// setTime.start();
 		SharedPreferences sp = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		mNormalSpeedText.setText(sp.getString("normaltime", null));
+
 	}
 
 	private double setDistance() {
 		double distance1;
 		distance1 = mSql.DistanceSerch();
+
 		BigDecimal bi = new BigDecimal(String.valueOf(distance1));
 		double distance2 = bi.setScale(2, BigDecimal.ROUND_UP).doubleValue();
 		return distance2;
 	}
-	
-	private void setTime(){
+
+	private void setTime() {
 		SharedPreferences sp = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		mTimeText.setText(sp.getString("playtime", null));
-		
+
 		sp.getString("laptime", null);
-		double ave = setDistance() / Double.valueOf(sp.getString("laptime", null))*3.6;
+		double ave = setDistance() * 3.2
+				/ Double.valueOf(sp.getString("laptime", null)) * 2.2;
+		ave = ave * 5;
 		BigDecimal bi = new BigDecimal(String.valueOf(ave));
 		double average = bi.setScale(2, BigDecimal.ROUND_UP).doubleValue();
-		mAverageText.setText(String.valueOf(average)+"km/h");
-		
+		mAverageText.setText(String.valueOf(average) + "mph");
+
 	}
-	
 
 	@Override
 	public void onClick(View v) {
@@ -94,12 +102,13 @@ public class ResultActivity extends Activity implements OnClickListener {
 			SharedPreferences sp = PreferenceManager
 					.getDefaultSharedPreferences(context);
 			mTimeText.setText(sp.getString("playtime", null));
-			
+
 			sp.getString("laptime", null);
-			double ave = setDistance() / Double.valueOf(sp.getString("laptime", null))*3.6;
+			double ave = setDistance()
+					/ Double.valueOf(sp.getString("laptime", null)) * 3.6;
 			BigDecimal bi = new BigDecimal(String.valueOf(ave));
 			double average = bi.setScale(2, BigDecimal.ROUND_UP).doubleValue();
-			mAverageText.setText(String.valueOf(average)+"km/h");
+			mAverageText.setText(String.valueOf(average) + "km/h");
 		}
 
 		@Override

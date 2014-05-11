@@ -51,7 +51,7 @@ import rajawali.renderer.RajawaliRenderer;
 public class ARdrillFragment extends RajawaliFragment implements
 		SensorEventListener {
 
-	private final float ALPHA = 0.8f;
+	private final float ALPHA = 0.4f;
 	private final int SENSITIVITY = 5;
 	public static final String BUNDLE_EXAMPLE_URL = "BUNDLE_EXAMPLE_URL";
 	protected ARRenderer mRenderer;
