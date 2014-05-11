@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.itnav.r4r.ardrill"
     android:versionCode="1"
@@ -37,6 +36,7 @@
         <activity
             android:name="jp.itnav.r4r.ardrill.InputFieldActivity"
             android:label="@string/app_name"
+            android:logo="@drawable/actionbar"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,17 +46,20 @@
         </activity>
         <activity
             android:name="jp.itnav.r4r.ardrill.ARdrillActivity"
-            android:label="@string/title_activity_ardrill"
+            android:label="@string/app_name"
+            android:logo="@drawable/actionbar"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name="jp.itnav.r4r.ardrill.ResultActivity"
-            android:label="@string/title_activity_result"
+             android:label="@string/app_name"
+            android:logo="@drawable/actionbar"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="jp.itnav.r4r.ardrill.MapActivity"
-            android:label="@string/title_activity_map"
+            android:label="@string/app_name"
+            android:logo="@drawable/actionbar"
             android:screenOrientation="portrait" >
         </activity>
     </application>

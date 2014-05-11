@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RaceForResilienceArDrill</string>
+    <string name="app_name">FloodAR</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_ardrill">ARdrillActivity</string>
@@ -19,7 +19,6 @@
     <string name="time">Time</string>
     <string name="alert_under">Time under normal cirumstance</string>
     <string name="show_map">ShowMap</string>
-
     <string name="msg_text1">避難場所まであと</string>
 	<string name="msg_text2">現在の歩行速度</string>
 	<string name="msg_text5">m</string>

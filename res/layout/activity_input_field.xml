@@ -90,6 +90,7 @@
         </EditText>
 
         <RelativeLayout
+            android:id="@+id/relativeLayout1"
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_alignLeft="@+id/HightTitleText"
@@ -131,9 +132,9 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/heightEditText"
             android:layout_alignBottom="@+id/heightEditText"
-            android:layout_alignRight="@+id/heightEditText"
-            android:text="cm" />
-
+            android:layout_toRightOf="@+id/relativeLayout1"
+            android:text="cm"
+            android:textSize="20dp" />
     </RelativeLayout>
 
 </RelativeLayout>

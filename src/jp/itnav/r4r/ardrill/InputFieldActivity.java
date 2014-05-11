@@ -38,13 +38,12 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_input_field);
 
-
 		RelativeLayout startButton = (RelativeLayout) findViewById(R.id.startButton);
 		startButton.setOnClickListener(this);
-		
+
 		button = (Button) findViewById(R.id.button1);
 		button.setOnClickListener(this);
-		
+
 		editAge = (EditText) findViewById(R.id.ageEditText);
 
 		editHeight = (EditText) findViewById(R.id.heightEditText);
@@ -85,9 +84,9 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode != -1){
-		Intent intent = new Intent(this, ResultActivity.class);
-		startActivity(intent);
+		if (resultCode != -1) {
+			Intent intent = new Intent(this, ResultActivity.class);
+			startActivity(intent);
 		}
 	}
 
@@ -96,39 +95,41 @@ public class InputFieldActivity extends Activity implements OnClickListener {
 
 		switch (v.getId()) {
 		case R.id.startButton:
-			Log.v("ddd","ddd");
+			Log.v("ddd", "ddd");
 			Intent intent = new Intent(this, ARdrillActivity.class);
 			intent.putExtra("Gender", mInputGender);
-			
+
 			editAge.selectAll();
 			mInputAge = editAge.getText().toString();
 			intent.putExtra("Age", mInputAge);
-			
+
 			editHeight.selectAll();
 			mInputHeight = editHeight.getText().toString();
 			intent.putExtra("Height", mInputHeight);
-			
+
 			try {
 				MySQLite sql = new MySQLite(this);
 				sql.Delete(this);
-				//LogがNullにならなかったらインテント
-				Log.i("Gender",mInputGender);
-				Log.i("Age",mInputAge);
-				Log.i("mInputHeight",mInputHeight);
-				SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		        sp.edit().remove("playtime").commit();
-		        sp.edit().remove("normaltime").commit();
-		        Log.i("GoalPotision",sp.getString("goalposition", null));
+				// LogがNullにならなかったらインテント
+				Log.i("Gender", mInputGender);
+				Log.i("Age", mInputAge);
+				Log.i("mInputHeight", mInputHeight);
+				SharedPreferences sp = PreferenceManager
+						.getDefaultSharedPreferences(this);
+				sp.edit().remove("playtime").commit();
+				sp.edit().remove("normaltime").commit();
+				Log.i("GoalPotision", sp.getString("goalposition", null));
 				startActivityForResult(intent, 0);
-			}catch(NullPointerException e) {
-			     Toast.makeText(this, "Error There are missing fields. Back", Toast.LENGTH_LONG).show();
+			} catch (NullPointerException e) {
+				Toast.makeText(this, "Error There are missing fields. Back",
+						Toast.LENGTH_LONG).show();
 			}
 			break;
 		case R.id.button1:
 			Intent intent2 = new Intent(this, MapActivity.class);
 			intent2.putExtra("type", "destination");
 			startActivityForResult(intent2, 0);
-			break;	
+			break;
 		}
 	}
 }
